@@ -1,3 +1,7 @@
+/*Step 2: In spaceship.js update the interaction() function and fill out the missing information in order to simulate the correct behavior in the system. When the left arrow is pressed the spaceship should move left, when the right arrow is pressed it should move right and so on. Please note that the spaceship won't move until you have completed the next step too.
+
+Step 3: In spaceship.js update the move() function similarly to how the move() function works in asteroidSystem. Make sure you limit the velocity vector to maxVelocity so that the spaceship does not accelerate too much. Notice how, unless we fire the rockets in the opposite direction, the spaceship will keep moving. There is no friction in empty space.
+*/
 class Spaceship {
 
   constructor(){
@@ -25,7 +29,12 @@ class Spaceship {
   }
 
   move(){
-      // YOUR CODE HERE (4 lines)
+      
+      this.velocity.add(this.acceleration);
+	  this.velocity.limit(this.maxVelocity); // Limit the velocity to max velocity limit
+	  
+      this.location.add(this.velocity);
+      this.acceleration.mult(0);
   }
 
   applyForce(f){
@@ -34,16 +43,16 @@ class Spaceship {
 
   interaction(){
       if (keyIsDown(LEFT_ARROW)){
-        this.applyForce(createVector(-0.1, 0));
+        this.applyForce(createVector(-0.1, 0)); // move to left
       }
       if (keyIsDown(RIGHT_ARROW)){
-      // YOUR CODE HERE (1 line)
+      	this.applyForce(createVector(0.1, 0)); // move to right
       }
       if (keyIsDown(UP_ARROW)){
-      // YOUR CODE HERE (1 line)
+        this.applyForce(createVector(0, -0.1)); // move upwards
       }
       if (keyIsDown(DOWN_ARROW)){
-      // YOUR CODE HERE (1 line)
+        this.applyForce(createVector(0, 0.1)); //move downwards
       }
   }
 
