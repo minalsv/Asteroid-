@@ -1,7 +1,4 @@
-/*Step 2: In spaceship.js update the interaction() function and fill out the missing information in order to simulate the correct behavior in the system. When the left arrow is pressed the spaceship should move left, when the right arrow is pressed it should move right and so on. Please note that the spaceship won't move until you have completed the next step too.
-
-Step 3: In spaceship.js update the move() function similarly to how the move() function works in asteroidSystem. Make sure you limit the velocity vector to maxVelocity so that the spaceship does not accelerate too much. Notice how, unless we fire the rockets in the opposite direction, the spaceship will keep moving. There is no friction in empty space.
-
+/*
 Step 9: In spaceship.js complete the setNearEarth() function. When the spaceship enters the earth's atmosphere it's affected by the earth's gravity. Create a "downwards-pointing" vector of strength 0.05 which pulls the spaceship towards the earth. The atmosphere also introduces friction and the spaceship can't move forever like in empty space. It will decelerate unless it fires its engines. Create a force called friction that's 30 times smaller than the velocity of the spaceship, points the opposite direction to velocity and is then applied in the the opposite direction.
 */
 class Spaceship {
@@ -70,7 +67,15 @@ class Spaceship {
   }
 
   setNearEarth(){
-    //YOUR CODE HERE (6 lines approx)
-      console.log("Spaceship is near to earth!");
+    
+      var downwardsPointing = new createVector(0,0.05);
+      this.applyForce(downwardsPointing); //apply gravity
+      
+      var friction = this.velocity.copy();
+      friction.div(30);
+      friction.mult(-1);
+      this.applyForce(friction); //apply friction
+      
+      console.log("Acceleration ",this.acceleration);
   }
 }
