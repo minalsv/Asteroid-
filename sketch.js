@@ -1,23 +1,3 @@
-/*
-
-Step 4: In sketch.js complete the isInside() function that takes the location of two circles and their diameters and returns true if they overlap, false otherwise. You could check it works, by creating a dummy circle around the mouse and checking if isInside() returns true.
-*/
-/*
-Step 5: In sketch.js complete the checkCollisions() function so that you check collisions between the spaceship and all asteroids. Hint: You'll need to loop over all the asteroids and use the inInside() function you just programmed. If it returns true then you'll call the gameOver() function. If you've done things right, if the spaceship is hit by an asteroid the game will end. Check before proceeding.
-
-Step 6: In sketch.js add more functionality to the checkCollisions() function to check if an asteroid has crashed onto earth. If you do things right then the game should end when that happens. Check before proceeding.
-
-Step 7: In sketch.js add more functionality to the checkCollisions() function to check if the spaceship has collided with the earth and if it has it ends the game. Check before proceeding.
-
-Step 8: In sketch.js add more functionality to the checkCollisions() function to check if the spaceship is inside the atmosphere. If it is, the spaceship's setNearEarth() function is called.
-
-
-
-Step 10: In sketch.js add more functionality to the checkCollisions() function to check if any of the bullets of the spaceship have hit any asteroids. If they have, then call the destroy() function of the asteroid object, passing it the index of the asteroid to destroy.
-
-Step 11: Implement two of the ideas for further development below. Points given to ambitious learners.
-*/
-
 var spaceship;
 var asteroids;
 var atmosphereLoc;
@@ -31,7 +11,8 @@ function setup() {
   createCanvas(1200,800);
   spaceship = new Spaceship();
   asteroids = new AsteroidSystem();
-
+  asteroids.setUp();
+    
   //location and size of earth and its atmosphere
   atmosphereLoc = new createVector(width/2, height*2.9);
   atmosphereSize = new createVector(width*3, width*3);
@@ -43,16 +24,33 @@ function setup() {
 function draw() {
   background(0);
   sky();
-
+  drawScoreBoard();
   spaceship.run();
   asteroids.run();
 
   drawEarth();
 
+     
+  drawScoreBoard();// show how many astoroids has been shot
+    
   checkCollisions(spaceship, asteroids); // function that checks collision between various elements
+   
+
+ 
 }
 
 //////////////////////////////////////////////////
+//draw the score board
+function drawScoreBoard(){
+    //display the score: number of astoroids deleted
+    //let s = asteroids.deletedAstroids;
+    fill(250);
+    textSize(40);
+    textAlign(CENTER);
+    text('Score:'+asteroids.deletedAstroids, width/2, height-50); // Text wraps within text box 
+   
+}
+
 //draws earth and atmosphere
 function drawEarth(){
   noStroke();
@@ -62,6 +60,7 @@ function drawEarth(){
   //draw earth
   fill(100,255);
   ellipse(earthLoc.x, earthLoc.y, earthSize.x, earthSize.y);
+
 }
 
 //////////////////////////////////////////////////
@@ -77,16 +76,42 @@ function checkCollisions(spaceship, asteroids){
     }
 
     //asteroid-2-earth collisions
-    //YOUR CODE HERE (2-3 lines approx)
+    for(var i=0; i < asteroids.locations.length ; i++){
+        if( isInside(earthLoc,earthSize.x,asteroids.locations[i],asteroids.diams[i])){
+            gameOver();
+        }
+            
+    }
 
     //spaceship-2-earth
-    //YOUR CODE HERE (1-2 lines approx)
+    if( isInside(earthLoc,earthSize.x,spaceship.location,spaceship.size)){
+            gameOver();
+    }
 
     //spaceship-2-atmosphere
-    //YOUR CODE HERE (1-2 lines approx)
+    if( isInside(atmosphereLoc,atmosphereSize.x,spaceship.location,spaceship.size)){
+            spaceship.setNearEarth();
+    }
 
     //bullet collisions
-    //YOUR CODE HERE (3-4 lines approx)
+    var i = 0;
+    while( i < asteroids.locations.length ){
+        astorideDeleted = false;
+        for(var j=0; j < spaceship.bulletSys.bullets.length; j++){
+        
+            if( isInside(spaceship.bulletSys.bullets[j], spaceship.bulletSys.diam, asteroids.locations[i], asteroids.diams[i])){
+                asteroids.destroy(i);
+                astorideDeleted = true;
+            }
+        }
+        
+        if( !astorideDeleted ){
+            //since astoride has NOT been deleted increment the astoroid index i
+            i++;
+        }
+
+            
+    }
 }
 
 //////////////////////////////////////////////////
@@ -95,12 +120,16 @@ function isInside(locA, sizeA, locB, sizeB){
     
     var collision = false;
     
-    var d = int(dist(locA.x, locA.y, locB.x, locB.y)); // calculate the distance between two centers of the two input circles.
-    
-    if( d <= ((sizeA/2)+ (sizeB/2))){
-		 collision = true; // Collision identified
+    try{
+        var d = int(dist(locA.x, locA.y, locB.x, locB.y)); // calculate the distance between two centers of the two input circles.
+
+        if( d <= ((sizeA/2)+ (sizeB/2))){
+             collision = true; // Collision identified
+        }
     }
-    
+    catch(error){
+        console.log('Ignore checking');
+    }
     return collision;
 }
 

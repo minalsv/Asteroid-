@@ -71,5 +71,6 @@ class Spaceship {
 
   setNearEarth(){
     //YOUR CODE HERE (6 lines approx)
+      console.log("Spaceship is near to earth!");
   }
 }

@@ -6,8 +6,11 @@ class AsteroidSystem {
     this.velocities = [];
     this.accelerations = [];
     this.diams = [];
+    this.deletedAstroids = 0;
+    this.interval = 0.01;
+    
   }
-
+    
   run(){
       this.spawn();
       this.move();
@@ -16,14 +19,18 @@ class AsteroidSystem {
 
   // spawns asteroid at random intervals
   spawn(){
-    if (random(1)<0.01){
+    if (random(1) < this.interval){
       this.accelerations.push(new createVector(0,random(0.1,1)));
       this.velocities.push(new createVector(0, 0));
       this.locations.push(new createVector(random(width), 0));
       this.diams.push(random(30,50));
+      this.astroidCount += this.locations.length;
     }
+
+    //console.log('interval ',this.interval);
   }
 
+    
   //moves all asteroids
   move(){
     for (var i=0; i<this.locations.length; i++){
@@ -48,6 +55,7 @@ class AsteroidSystem {
     }
   }
 
+    
   //function that calculates effect of gravity on each asteroid and accelerates it
   calcGravity(centerOfMass){
     for (var i=0; i<this.locations.length; i++){
@@ -63,6 +71,22 @@ class AsteroidSystem {
     this.locations.splice(index,1);
     this.velocities.splice(index,1);
     this.accelerations.splice(index,1);
-    this.diams.splice(index,1);
+    this.diams.splice(index,1); // remove the astoroid hit by the bullet
+      
+    this.deletedAstroids += 1; //keep the score
   }
+    
+  //increase interval range so it allows to create more astroids as time passes
+  increaseIntervalRange(){
+
+    this.interval += 0.01;//change the interval after every 10 seconds, this way more astroid will start coming over time.   
+    console.log('Interval ',this.interval); 
+        
+  }
+    
+  setUp(){
+      setInterval(this.increaseIntervalRange.bind(this),10000); //set interval function to change the interval range and to send more astroids
+      console.log('Set interval');
+  }
+    
 }
